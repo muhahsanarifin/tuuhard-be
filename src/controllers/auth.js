@@ -45,8 +45,6 @@ module.exports = {
 
       await redis.set(response, 86400);
 
-      await redis.quit();
-
       res.status(200).json({
         data: { token: response },
         msg: "Success login",
@@ -96,6 +94,9 @@ module.exports = {
       });
 
       await redis.set(token, 86400);
+
+      // Redis
+      // await redis.quit();
 
       // Async || Developer does not use async function to implement nodemailer because latency req process is so high.
       // await nodemailer.mailer(response, token);
