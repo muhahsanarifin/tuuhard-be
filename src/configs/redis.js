@@ -1,17 +1,39 @@
 const redis = require("redis");
 
+// let client;
+
+// client = null;
+
+// if (!client) {
+//   client = redis.createClient({
+//     url: process.env.REDIS_URL,
+//   });
+
+//   client.on("connect", () => {
+//     console.log("Connected to Redis.");
+//   });
+
+//   client.on("error", (err) => {
+//     console.log("Error:", err);
+//   });
+// }
+
+// client.connect().then();
+
+// module.exports = client;
+
 const client = redis.createClient({
-  url: process.env.URL_REDIS,
-  username: process.env.USERNAME_REDIS,
-  password: process.env.PASSWORD_REDIS,
+  url: process.env.REDIS_URL,
 });
 
 client.on("connect", () => {
-  console.log("Connected to Redis");
+  console.log("Connected to Redis.");
 });
 
 client.on("error", (err) => {
   console.log("Error:", err);
 });
+
+client.connect().then();
 
 module.exports = client;
