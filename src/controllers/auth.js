@@ -1,9 +1,62 @@
 const authModels = require("../models/auth");
 const userModels = require("../models/users");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
+const bcrypt = require("bcrypt");
+const redis = require("../helpers/redis");
+const nodemailer = require("../helpers/nodemailer");
 
 module.exports = {
+  login: async (req, res) => {
+    try {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!regex.test(req.body.email)) {
+        return res.status(400).json({
+          msg: "Email format is wrong",
+        });
+      }
+
+      const result = await userModels.retriveUserByEmail(req.body);
+
+      if (result.rows.length === 0) {
+        return res.status(401).json({
+          msg: "Email is not registered",
+        });
+      }
+
+      const resultRetriveAccount = await userModels.retriveAccount(req.body);
+      if (resultRetriveAccount.rows[0].status_account === "inactive") {
+        return res.status(401).json({
+          msg: "Inactive email",
+        });
+      }
+
+      const match = await bcrypt.compare(
+        req.body.password,
+        result.rows[0].password
+      );
+
+      if (!match) {
+        return res.status(401).json({
+          msg: "Wrong password",
+        });
+      }
+      const response = await authModels.login(result);
+
+      await redis.set(response, 86400);
+
+      await redis.quit();
+
+      res.status(200).json({
+        data: { token: response },
+        msg: "Success login",
+      });
+    } catch (error) {
+      res.status(500).json({
+        msg: "Internal server error",
+      });
+    }
+  },
   register: async (req, res) => {
     try {
       const { password, confirmPassword, email } = req.body;
@@ -42,41 +95,14 @@ module.exports = {
         expiresIn: "24h",
       });
 
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        secure: false,
-        auth: {
-          user: process.env.EMAIL_SENDER,
-          pass: process.env.PASSWORD_SENDER,
-        },
-      });
+      await redis.set(token, 86400);
 
-      const mailOptions = {
-        from: process.env.EMAIL_SENDER,
-        to: response.email,
-        subject: "Tuuhard | Registertion Confirmation",
-        html: `<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Registration Confirmation</title>
-  </head>
-  <body style="font-family: Arial, sans-serif; font-size: 16px;">
-    <h2 style="text-align: center; color: #A5D7E8;">Thank You for Registering!</h2>
-    <p style="font-weight: 700;">Dear ${response.email},</p>
-    <p>We are pleased to confirm your registration. Please click the <a href="${process.env.URL_DIRECT_TO_CONFIRM}/?token=${token}" style="color: #A5D7E8; font-weight: 700;">link</a></p>
-    <p>If you have any questions or concerns, please do not hesitate to contact us at <span style="font-weight:600;">yukduit@gmail.com</span>.</p>
-    <p>Thank you again for registering.</p>
-    <p>Best regards,<br><span style="font-weight: 700;">tuuhard team</span></p>
-  </body>
-</html>`,
-      };
+      // Async || Developer does not use async function to implement nodemailer because latency req process is so high.
+      // await nodemailer.mailer(response, token);
 
-      transporter.sendMail(mailOptions, (err, info) => {
-        if (err) {
-          console.log(err);
-        }
-        console.log(info.response);
-      });
+      if (response) {
+        nodemailer.mailer(response, token);
+      }
 
       res.status(201).json({
         msg: "Registration successful. Please check your email for confirmation",

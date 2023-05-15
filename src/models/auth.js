@@ -1,7 +1,29 @@
 const db = require("../configs/postgre");
 const bcrypt = require("bcrypt");
-
+const jwt = require("jsonwebtoken");
 module.exports = {
+  login: (data) => {
+    const { id, email, role } = data.rows[0];
+    return new Promise((resolve, reject) => {
+      const payload = {
+        id: id,
+        email: email,
+        role: role,
+      };
+
+      const jwtOption = {
+        expiresIn: "24h",
+      };
+
+      jwt.sign(payload, process.env.SECRET_KEY, jwtOption, (error, token) => {
+        if (error) {
+          return reject(error);
+        }
+
+        resolve(token);
+      });
+    });
+  },
   register: (body) => {
     const { email, password } = body;
 
@@ -14,7 +36,7 @@ module.exports = {
         const query =
           "INSERT INTO users (email, password, role_id, created_at) VALUES ($1, $2, $3, $4) RETURNING *";
 
-        db.query(query, [email, hash, "3", new Date()], (error, result) => {
+        db.query(query, [email, hash, "3", new Date()], (error, userResult) => {
           if (error) {
             return reject(error);
           }
@@ -24,8 +46,8 @@ module.exports = {
 
           db.query(
             query,
-            [result.rows[0].id, "inactive", new Date()],
-            (error, result) => {
+            [userResult.rows[0].id, "inactive", new Date()],
+            (error, accountResult) => {
               if (error) {
                 return reject(error);
               }
@@ -35,16 +57,17 @@ module.exports = {
 
               db.query(
                 query,
-                [result.rows[0].user_id, new Date()],
-                (error, result) => {
+                [accountResult.rows[0].user_id, new Date()],
+                (error, profileResult) => {
                   if (error) {
                     return reject(error);
                   }
 
                   const data = {
+                    id: profileResult.rows[0].user_id,
                     email: email,
+                    role: userResult.rows[0].role_id,
                   };
-                  console.log(result);
                   resolve(data);
                 }
               );
