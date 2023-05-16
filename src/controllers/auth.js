@@ -1,7 +1,7 @@
-const authModels = require("../models/auth");
-const userModels = require("../models/users");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const authModels = require("../models/auth");
+const userModels = require("../models/users");
 const redis = require("../helpers/redis");
 const nodemailer = require("../helpers/nodemailer");
 
@@ -111,6 +111,21 @@ module.exports = {
     } catch (error) {
       res.status(500).json({
         msg: "Internal server error",
+      });
+    }
+  },
+  confirm: async (req, res) => {
+    try {
+      const { token } = req.query;
+
+      const response = await authModels.confirm(token);
+
+      res.status(200).json({
+        msg: `Email confirmed ${response.rows[0].status_account}. You may now log in`,
+      });
+    } catch (error) {
+      res.status(400).json({
+        msg: "Internal server error.",
       });
     }
   },

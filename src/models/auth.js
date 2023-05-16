@@ -1,6 +1,7 @@
-const db = require("../configs/postgre");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const db = require("../configs/postgre");
+const verify = require("../helpers/jsonwebtoken");
 module.exports = {
   login: (data) => {
     const { id, email, role } = data.rows[0];
@@ -73,6 +74,22 @@ module.exports = {
               );
             }
           );
+        });
+      });
+    });
+  },
+  confirm: (token) => {
+    return new Promise((resolve, reject) => {
+      // Promise.prototype.then()
+      verify.decoded(token, process.env.SECRET_KEY).then((result) => {
+        const query =
+          "UPDATE accounts SET status_account = $2, updated_at = $3 WHERE user_id = $1 RETURNING status_account";
+
+        db.query(query, [result.id, "active", new Date()], (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          return resolve(result);
         });
       });
     });
