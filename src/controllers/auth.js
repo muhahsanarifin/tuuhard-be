@@ -43,7 +43,8 @@ module.exports = {
       }
       const response = await authModels.login(result);
 
-      await redis.set(response, 86400);
+      // t = token, l = login, u = user
+      await redis.set(`tlu-${response}`, response, 86400);
 
       res.status(200).json({
         data: { token: response },
@@ -93,7 +94,8 @@ module.exports = {
         expiresIn: "24h",
       });
 
-      await redis.set(token, 86400);
+      // t = token r = register, u = user,
+      await redis.set(`tru-${token}`, token, 86400);
 
       // Redis
       // await redis.quit();
@@ -124,7 +126,7 @@ module.exports = {
         msg: `Email confirmed ${response.rows[0].status_account}. You may now log in`,
       });
     } catch (error) {
-      res.status(400).json({
+      res.status(500).json({
         msg: "Internal server error.",
       });
     }
