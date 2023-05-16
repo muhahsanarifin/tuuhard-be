@@ -1,13 +1,13 @@
 const redisClient = require("../configs/redis");
 
 module.exports = {
-  set: async (token, expiry) => {
+  set: async (key, value, expiry) => {
     try {
       // const result = await redisClient.set("token", token, {
       //   EX: expiry,
       //   NX: true,
       // });
-      const result = await redisClient.set("token", token, {
+      const result = await redisClient.set(key, value, {
         EX: expiry,
       });
       return console.log("Set:", result);
