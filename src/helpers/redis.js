@@ -3,7 +3,7 @@ const redisClient = require("../configs/redis");
 module.exports = {
   set: async (key, value, expiry) => {
     try {
-      // const result = await redisClient.set("token", token, {
+      // const result = await redisClient.set(key, value, {
       //   EX: expiry,
       //   NX: true,
       // });
@@ -18,9 +18,21 @@ module.exports = {
   get: async (key) => {
     try {
       const result = await redisClient.get(key);
-      return console.log("Get:", result);
+      console.log("Get:", result);
+      return result;
     } catch (error) {
-      return console.log("Error:", error);
+      console.log("Error:", error);
+      return error;
+    }
+  },
+  delete: async (key) => {
+    try {
+      const result = await redisClient.del(key);
+      console.log("Delete:", result);
+      return result;
+    } catch (error) {
+      console.log("Error:", error);
+      return error;
     }
   },
   quit: async () => {
