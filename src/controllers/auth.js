@@ -131,4 +131,23 @@ module.exports = {
       });
     }
   },
+  logout: async (req, res) => {
+    const token = req.header("Authorization").split(" ")[1];
+
+    try {
+      const response = await redis.delete(`tlu-${token}` || `tru-${token}`);
+
+      console.log(response);
+
+      res.status(200).json({
+        // status response is got from delete redis response.
+        status: response && "Ok",
+        msg: "Logout success.",
+      });
+    } catch (error) {
+      res.status(500).json({
+        msg: "Internal server error",
+      });
+    }
+  },
 };
