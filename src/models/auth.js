@@ -94,4 +94,18 @@ module.exports = {
       });
     });
   },
+  logout: (payload) => {
+    const { id } = payload;
+
+    return new Promise((resolve, reject) => {
+      const query =
+        "UPDATE users SET last_login = $2 WHERE id = $1 RETURNING email, last_login";
+      db.query(query, [id, new Date()], (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(result);
+      });
+    });
+  },
 };

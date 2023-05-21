@@ -19,14 +19,14 @@ module.exports = {
       const result = await userModels.retriveUserByEmail(req.body);
 
       if (result.rows.length === 0) {
-        return res.status(401).json({
+        return res.status(400).json({
           msg: "Email is not registered",
         });
       }
 
       const resultRetriveAccount = await userModels.retriveAccount(req.body);
       if (resultRetriveAccount.rows[0].status_account === "inactive") {
-        return res.status(401).json({
+        return res.status(400).json({
           msg: "Inactive email",
         });
       }
@@ -37,7 +37,7 @@ module.exports = {
       );
 
       if (!match) {
-        return res.status(401).json({
+        return res.status(400).json({
           msg: "Wrong password",
         });
       }
@@ -135,13 +135,13 @@ module.exports = {
     const token = req.header("Authorization").split(" ")[1];
 
     try {
-      const response = await redis.delete(`tlu-${token}` || `tru-${token}`);
+      const status = await redis.delete(`tlu-${token}` || `tru-${token}`);
 
-      console.log(response);
+      const response = await authModels.logout(req.userPayload);
 
       res.status(200).json({
-        // status response is got from delete redis response.
-        status: response && "Ok",
+        status: status && "Ok",
+        data: response.rows,
         msg: "Logout success.",
       });
     } catch (error) {
