@@ -4,7 +4,7 @@ module.exports = {
   retriveProducts: () => {
     return new Promise((resolve, reject) => {
       const query =
-        "SELECT p.product, p.image, p.price, p.created_at, p.updated_at from products p";
+        "SELECT p.id, p.product, p.image, p.price, c.category, p.created_at, p.updated_at FROM products p JOIN categories c ON p.category_id = c.id";
       db.query(query, (error, result) => {
         if (error) {
           return reject(error);
@@ -13,10 +13,11 @@ module.exports = {
       });
     });
   },
-  retriveProduct: (idProduct) => {
+  retriveProduct: (productId) => {
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM profucts where id = $1";
-      db.query(query, [idProduct], (error, result) => {
+      const query =
+        "SELECT p.id, p.product, p.image, p.price, c.category, p.created_at, p.updated_at FROM products p JOIN categories c ON p.category_id = c.id WHERE p.id = $1";
+      db.query(query, [productId], (error, result) => {
         if (error) {
           return reject(error);
         }
@@ -27,8 +28,11 @@ module.exports = {
   // Retrive product by product name
   retriveProductByName: (name) => {
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM products WHERE product = $1";
-      db.query(query, [name], (error, result) => {
+      const query =
+        "SELECT p.id, p.product, p.image, p.price, c.category, p.created_at, p.updated_at FROM products p JOIN categories c ON p.category_id = c.id WHERE p.product ILIKE " +
+        `'%${name}%'`;
+
+      db.query(query, (error, result) => {
         if (error) {
           return reject(error);
         }
@@ -38,7 +42,7 @@ module.exports = {
   },
   create: (body, file) => {
     return new Promise((resolve, reject) => {
-      let { product, image, price } = body;
+      let { product, image, price, category_id } = body;
 
       image = file.secure_url;
 
@@ -47,10 +51,10 @@ module.exports = {
       const sliceUrlImage = image.slice(image.indexOf("image"));
 
       const query =
-        "INSERT INTO products (product, image, price, created_at) VALUES ($1, $2, $3, $4) RETURNING *";
+        "INSERT INTO products (product, image, price, category_id, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *";
       db.query(
         query,
-        [product, sliceUrlImage, Number(price), new Date()],
+        [product, sliceUrlImage, Number(price), category_id, new Date()],
         (error, result) => {
           if (error) {
             return reject(error);
@@ -60,10 +64,10 @@ module.exports = {
       );
     });
   },
-  deleteProduct: (idProduct) => {
+  deleteProduct: (productId) => {
     return new Promise((resolve, reject) => {
       const query = "DELETE FROM products WHERE id = $1";
-      db.query(query, [idProduct], (error, result) => {
+      db.query(query, [productId], (error, result) => {
         if (error) {
           return reject(error);
         }
@@ -71,7 +75,7 @@ module.exports = {
       });
     });
   },
-  editProduct: (body, idProduct, file, previousData) => {
+  editProduct: (body, productId, file, previousData) => {
     let { product, image, price } = body;
     let sliceUrlImage;
     return new Promise((resolve, reject) => {
@@ -100,7 +104,23 @@ module.exports = {
         "UPDATE products SET product = $2, image = $3, price = $4, updated_at = $5 WHERE id = $1";
       db.query(
         query,
-        [idProduct, product, sliceUrlImage, price, new Date()],
+        [productId, product, sliceUrlImage, price, new Date()],
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          return resolve(result);
+        }
+      );
+    });
+  },
+  // C = Category, P = Prodcut
+  updatePCByCategoryId: (categoryId) => {
+    return new Promise((resolve, reject) => {
+      const query = "UPDATE products SET category = $2 WHERE category_id = $1";
+      db.query(
+        query,
+        [Number(categoryId), Number(categoryId)],
         (error, result) => {
           if (error) {
             return reject(error);

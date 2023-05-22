@@ -11,11 +11,11 @@ const uploads = require("../middlewares/uploads");
 const checkAllowedRoles = require("../middlewares/allowedRoles");
 
 authRouter.get("/", checkLogin, productControllers.retriveProducts);
-authRouter.get("/:idProduct", checkLogin, productControllers.retriveProduct);
+authRouter.get("/:productId", checkLogin, productControllers.retriveProduct);
 authRouter.post(
   "/create",
   checkLogin,
-  checkAllowedRoles(["admin", "developer"]),
+  checkAllowedRoles(["admin", "developer", "staff"]),
   (req, res, next) =>
     singleMemoryUpload("image")(req, res, (err) => {
       errorHandler(err, res, next);
@@ -25,7 +25,7 @@ authRouter.post(
   productControllers.create
 );
 authRouter.patch(
-  "/edit/:idProduct",
+  "/edit/:productId",
   checkLogin,
   checkAllowedRoles(["admin", "developer"]),
   (req, res, next) =>
@@ -36,6 +36,6 @@ authRouter.patch(
     uploads(`PT-${req.body.product}`, "tuuhard-products", req, res, next),
   productControllers.edit
 );
-authRouter.delete("/delete/idProduct", checkLogin, productControllers.delete);
+authRouter.delete("/delete/productId", checkLogin, productControllers.delete);
 
 module.exports = authRouter;

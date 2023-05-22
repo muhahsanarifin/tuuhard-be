@@ -16,7 +16,7 @@ module.exports = {
   },
   retriveProduct: async (req, res) => {
     try {
-      const response = await productModels.retriveProduct(req.params);
+      const response = await productModels.retriveProduct(req.params.productId);
 
       res.status(200).json({
         data: response.rows,
@@ -30,7 +30,9 @@ module.exports = {
   },
   create: async (req, res) => {
     try {
-      const existProduct = await productModels.retriveProductByName(req.body.name);
+      const existProduct = await productModels.retriveProductByName(
+        req.body.product
+      );
 
       if (existProduct.rows.length > 0) {
         return res.status(400).json({
@@ -52,12 +54,12 @@ module.exports = {
   edit: async (req, res) => {
     try {
       const retriveExistProduct = await productModels.retriveProduct(
-        req.params
+        req.params.productId
       );
 
       const response = await productModels.edit(
         req.body,
-        req.params,
+        req.params.productId,
         req.file,
         retriveExistProduct.rows[0]
       );
@@ -73,7 +75,7 @@ module.exports = {
   },
   delete: async (req, res) => {
     try {
-      await productModels.delete(req.params);
+      await productModels.delete(req.params.productId);
       res.status(200).json({
         msg: "Success delete product",
       });
