@@ -54,7 +54,7 @@ module.exports = {
         "INSERT INTO products (product, image, price, category_id, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *";
       db.query(
         query,
-        [product, sliceUrlImage, Number(price), category_id, new Date()],
+        [product, sliceUrlImage, Number(price), category_id, Date.now()],
         (error, result) => {
           if (error) {
             return reject(error);
@@ -104,7 +104,7 @@ module.exports = {
         "UPDATE products SET product = $2, image = $3, price = $4, updated_at = $5 WHERE id = $1";
       db.query(
         query,
-        [productId, product, sliceUrlImage, price, new Date()],
+        [productId, product, sliceUrlImage, price, Date.now()],
         (error, result) => {
           if (error) {
             return reject(error);

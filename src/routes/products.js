@@ -1,5 +1,4 @@
-const express = require("express");
-const authRouter = express.Router();
+const authRouter = require("express").Router();
 const productControllers = require("../controllers/products");
 
 const checkLogin = require("../middlewares/checkLogin");
@@ -10,8 +9,18 @@ const {
 const uploads = require("../middlewares/uploads");
 const checkAllowedRoles = require("../middlewares/allowedRoles");
 
-authRouter.get("/", checkLogin, productControllers.retriveProducts);
-authRouter.get("/:productId", checkLogin, productControllers.retriveProduct);
+authRouter.get(
+  "/",
+  checkLogin,
+  checkAllowedRoles(["admin", "developer", "staff"]),
+  productControllers.retriveProducts
+);
+authRouter.get(
+  "/:productId",
+  checkLogin,
+  checkAllowedRoles(["admin", "developer", "staff"]),
+  productControllers.retriveProduct
+);
 authRouter.post(
   "/create",
   checkLogin,
@@ -27,7 +36,7 @@ authRouter.post(
 authRouter.patch(
   "/edit/:productId",
   checkLogin,
-  checkAllowedRoles(["admin", "developer"]),
+  checkAllowedRoles(["admin", "developer", "staff"]),
   (req, res, next) =>
     singleMemoryUpload("image")(req, res, (err) => {
       errorHandler(err, res, next);
@@ -36,6 +45,11 @@ authRouter.patch(
     uploads(`PT-${req.body.product}`, "tuuhard-products", req, res, next),
   productControllers.edit
 );
-authRouter.delete("/delete/productId", checkLogin, productControllers.delete);
+authRouter.delete(
+  "/delete/productId",
+  checkLogin,
+  checkAllowedRoles(["admin", "developer"]),
+  productControllers.delete
+);
 
 module.exports = authRouter;
