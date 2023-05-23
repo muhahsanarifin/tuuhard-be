@@ -3,16 +3,14 @@ const redisClient = require("../configs/redis");
 module.exports = {
   set: async (key, value, expiry) => {
     try {
-      // const result = await redisClient.set(key, value, {
-      //   EX: expiry,
-      //   NX: true,
-      // });
       const result = await redisClient.set(key, value, {
         EX: expiry,
       });
-      return console.log("Set:", result);
+      console.log("Set:", result);
+      return result;
     } catch (error) {
-      return console.log("Error:", error);
+      console.log("Error:", error);
+      return error;
     }
   },
   get: async (key) => {
@@ -37,22 +35,22 @@ module.exports = {
   },
   quit: async () => {
     try {
-      // if (redisClient) {
-      //   const result = await redisClient.quit();
-      //   return console.log("Quit:", result);
-      // }
       const result = await redisClient.quit();
-      return console.log("Quit:", result);
+      console.log("Quit:", result);
+      return result;
     } catch (error) {
-      return console.log("Error:", error);
+      console.log("Error:", error);
+      return error;
     }
   },
   disconnect: async () => {
     try {
       const result = await redisClient.disconnect();
-      return console.log("Disconnect:", result);
+      console.log("Disconnect:", result);
+      return result;
     } catch (error) {
-      return console.log("Error :", error);
+      console.log("Error :", error);
+      return error;
     }
   },
 };
