@@ -1,5 +1,4 @@
-const express = require("express");
-const passwordRouter = express.Router();
+const passwordRouter = require("express").Router();
 const passwordControllers = require("../controllers/passwords");
 const checkLogin = require("../middlewares/checkLogin");
 

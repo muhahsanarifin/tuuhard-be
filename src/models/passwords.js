@@ -6,7 +6,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       // r = reset, p = password, b = by, at = a
       bcrypt.hash(
-        "rpb" + email + "a" + new Date().toString(),
+        "rpb" + email + "a" + new Date(Date.now()).toString(),
         10,
         (error, hash) => {
           if (error) {
@@ -27,7 +27,7 @@ module.exports = {
         }
         const query =
           "UPDATE users SET password = $2, updated_at = $3 WHERE email = $1 RETURNING email";
-        db.query(query, [email, hash, new Date()], (error, result) => {
+        db.query(query, [email, hash, Date.now()], (error, result) => {
           if (error) {
             return reject(error);
           }
@@ -50,7 +50,7 @@ module.exports = {
         }
         const query =
           "UPDATE users SET password = $2, updated_at = $3 WHERE email = $1 RETURNING email";
-        db.query(query, [email, hash, new Date()], (error, result) => {
+        db.query(query, [email, hash, Date.now()], (error, result) => {
           if (error) {
             return reject(error);
           }
