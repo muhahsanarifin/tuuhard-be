@@ -4,7 +4,12 @@ const categoryControllers = require("../controllers/categories");
 const checkLogin = require("../middlewares/checkLogin");
 const allowedRoles = require("../middlewares/allowedRoles");
 
-categoryRouter.get("/", checkLogin, categoryControllers.retrivesCategories);
+categoryRouter.get(
+  "/",
+  checkLogin,
+  allowedRoles(["admin", "developer", "staff"]),
+  categoryControllers.retrivesCategories
+);
 categoryRouter.post(
   "/create",
   checkLogin,

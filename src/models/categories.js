@@ -43,7 +43,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const query =
         "INSERT INTO categories (category, created_at) VALUES ($1, $2) RETURNING *";
-      db.query(query, [category, new Date()], (error, result) => {
+      db.query(query, [category, Date.now()], (error, result) => {
         if (error) {
           return reject(error);
         }
@@ -73,7 +73,7 @@ module.exports = {
 
       const query =
         "UPDATE categories set category = $2, updated_at = $3 WHERE id = $1 RETURNING category, updated_at";
-      db.query(query, [categoryId, category, new Date()], (error, result) => {
+      db.query(query, [categoryId, category, Date.now()], (error, result) => {
         if (error) {
           return reject(error);
         }
