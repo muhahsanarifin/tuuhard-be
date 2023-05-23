@@ -44,9 +44,10 @@ module.exports = {
       const response = await authModels.login(result);
 
       // t = token, l = login, u = user
-      await redis.set(`tlu-${response}`, response, 86400);
+      const status = await redis.set(`tlu-${response}`, response, 86400);
 
       res.status(200).json({
+        status: status && "Online",
         data: { token: response },
         msg: "Success login",
       });
@@ -135,12 +136,15 @@ module.exports = {
     const token = req.header("Authorization").split(" ")[1];
 
     try {
-      const status = await redis.delete(`tlu-${token}` || `tru-${token}`);
-
       const response = await authModels.logout(req.userPayload);
 
+      let status;
+      if (response) {
+        status = await redis.delete(`tlu-${token}` || `tru-${token}`);
+      }
+
       res.status(200).json({
-        status: status && "Ok",
+        status: status && "Offline",
         data: response.rows,
         msg: "Logout success.",
       });

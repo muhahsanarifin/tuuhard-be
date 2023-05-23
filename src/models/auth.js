@@ -37,7 +37,7 @@ module.exports = {
         const query =
           "INSERT INTO users (email, password, role_id, created_at) VALUES ($1, $2, $3, $4) RETURNING *";
 
-        db.query(query, [email, hash, "3", new Date()], (error, userResult) => {
+        db.query(query, [email, hash, "3", Date.now()], (error, userResult) => {
           if (error) {
             return reject(error);
           }
@@ -47,7 +47,7 @@ module.exports = {
 
           db.query(
             query,
-            [userResult.rows[0].id, "inactive", new Date()],
+            [userResult.rows[0].id, "inactive", Date.now()],
             (error, accountResult) => {
               if (error) {
                 return reject(error);
@@ -58,7 +58,7 @@ module.exports = {
 
               db.query(
                 query,
-                [accountResult.rows[0].user_id, new Date()],
+                [accountResult.rows[0].user_id, Date.now()],
                 (error, profileResult) => {
                   if (error) {
                     return reject(error);
@@ -85,7 +85,7 @@ module.exports = {
         const query =
           "UPDATE accounts SET status_account = $2, updated_at = $3 WHERE user_id = $1 RETURNING status_account";
 
-        db.query(query, [result.id, "active", new Date()], (error, result) => {
+        db.query(query, [result.id, "active", Date.now()], (error, result) => {
           if (error) {
             return reject(error);
           }
@@ -100,7 +100,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const query =
         "UPDATE users SET last_login = $2 WHERE id = $1 RETURNING email, last_login";
-      db.query(query, [id, new Date()], (error, result) => {
+      db.query(query, [id, Date.now()], (error, result) => {
         if (error) {
           return reject(error);
         }
