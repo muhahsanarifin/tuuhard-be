@@ -1,3 +1,24 @@
 node_modules
-src
-index.js
+.env
+
+# Sources
+
+### Transaction 
+src/controllers/transactions.js
+src/models/transactions.js
+src/routes/transactions.js
+
+### Users 
+src/routes/users.js
+src/controllers/users.js
+
+### Order
+src/controllers/orders.js
+src/models/orders.js
+src/routes/orders.js
+
+### History
+src/models/history.js
+
+### Notes
+notes.js
