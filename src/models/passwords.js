@@ -36,12 +36,7 @@ module.exports = {
       });
     });
   },
-  confirm: () => {
-    return new Promise((resolve, reject) => {
-      resolve("Success");
-      reject("Error");
-    });
-  },
+
   change: (newPassword, email) => {
     return new Promise((resolve, reject) => {
       bcrypt.hash(newPassword, 10, (error, hash) => {

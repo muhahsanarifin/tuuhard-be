@@ -7,11 +7,15 @@ const userModels = require("../models/users");
 module.exports = {
   change: async (req, res) => {
     try {
+      const { password, newPassword, newConfirmPassword } = req.body;
 
-      const { password, newPassword } = req.body;
+      if (newPassword !== newConfirmPassword) {
+        return res.status(401).json({
+          msg: "New password does not match",
+        });
+      }
 
       const result = await userModels.retriveUserByEmail(req.userPayload);
-      
 
       const match = await bcrypt.compare(password, result.rows[0].password);
 
