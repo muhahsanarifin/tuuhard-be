@@ -40,7 +40,7 @@ module.exports = {
         });
       }
 
-      const response = await productModels.create(req.body, req.file);
+      const response = await productModels.createProduct(req.body, req.file);
       res.status(201).json({
         data: response.rows,
         msg: "Success create product",
@@ -53,15 +53,10 @@ module.exports = {
   },
   edit: async (req, res) => {
     try {
-      const retriveExistProduct = await productModels.retriveProduct(
-        req.params.productId
-      );
-
-      const response = await productModels.edit(
+      const response = await productModels.editProduct(
         req.body,
         req.params.productId,
-        req.file,
-        retriveExistProduct.rows[0]
+        req.file
       );
       res.status(201).json({
         data: response.rows,
