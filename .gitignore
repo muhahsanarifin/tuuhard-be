@@ -17,6 +17,9 @@ src/controllers/orders.js
 src/models/orders.js
 src/routes/orders.js
 
+### Checkout
+src/models/checkout.js
+
 ### History
 src/models/history.js
 
