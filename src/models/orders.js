@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 
 module.exports = {
-  create: (user, customer, body, client) => {
-    const { quantity_total, subtotal, tax, total } = body;
+  create: (user, customer, body, purchase, client) => {
+    const { tax } = body;
 
     return new Promise((resolve, reject) => {
       // T = Tuuhard C = Customer N = No, O = Order
@@ -17,10 +17,10 @@ module.exports = {
           customer.id,
           "TCNO-" + noOrderHash,
           2,
-          quantity_total,
-          subtotal,
+          purchase.quantity_total,
+          purchase.subtotal,
           tax,
-          total,
+          purchase.total,
           Date.now(),
         ];
         client.query(query, values, (error, result) => {
