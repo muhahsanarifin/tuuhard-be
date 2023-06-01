@@ -1,22 +1,20 @@
 const snap = require("../configs/midtransClientSnap");
 
 module.exports = {
-  create: (staff, body) => {
-
-    const { first_name, last_name, email, no_telp, order_id, total} = body;
+  create: (staff, customer, order ) => {
 
     return new Promise((resolve, reject) => {
       let parameter = {
         payment_type: ["qris", "bca_klikpay"],
         transaction_details: {
-          order_id: order_id,
-          gross_amount: total,
+          order_id: order.no_order,
+          gross_amount: order.total,
         },
         customer_detail: {
-          first_name: first_name,
-          last_name: last_name,
-          email: email,
-          phone: no_telp,
+          first_name: customer.first_name,
+          last_name: customer.last_name,
+          email: customer.email,
+          phone: customer.no_telp,
           billing_address: {
             first_name: staff.first_name,
             last_name: staff.last_name,
