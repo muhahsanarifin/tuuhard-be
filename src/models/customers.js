@@ -21,4 +21,16 @@ module.exports = {
       });
     });
   },
+  customerRecently: (body, client) => {
+    const { customer_id } = body;
+    return new Promise((resolve, reject) => {
+      const query = "SELECT * FROM customers WHERE id = $1";
+      client.query(query, [customer_id], (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(result);
+      });
+    });
+  },
 };
