@@ -154,4 +154,24 @@ module.exports = {
       });
     });
   },
+
+  updateStockProduct: (body, client) => {
+    const { products } = body;
+
+    return new Promise((resolve, reject) => {
+      for (const product of products) {
+        const query = {
+          text: "UPDATE products stock = $2 WHERE id = $1",
+          values: [product.id],
+        };
+        client.query(query, (error, result) => {
+          console.log("Result: ", result);
+          if (error) {
+            return reject(error);
+          }
+          return resolve();
+        });
+      }
+    });
+  },
 };
