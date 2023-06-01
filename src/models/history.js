@@ -8,8 +8,6 @@ module.exports = {
 
       let values = [];
 
-      let insertedHistoryResults = [];
-
       histories.forEach((history, idx) => {
         const { product, image, price, quantity } = history;
 
@@ -28,15 +26,13 @@ module.exports = {
           quantity,
           Date.now()
         );
+      });
+      client.query(query + " RETURNING id, product, image, price, quantity, created_at", values, (error, result) => {
+        if (error) {
+          return reject(error);
+        }
 
-        client.query(query + " RETURNING *", values, (error, result) => {
-          if (error) {
-            return reject(error);
-          }
-          insertedHistoryResults.push(result.rows[0]);
-
-          return resolve(insertedHistoryResults);
-        });
+        return resolve(result);
       });
     });
   },
@@ -60,7 +56,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const query = "SELECT * FROM histories WHERE order_id = $1";
       client.query(query, [order.id], (error, result) => {
-        console.log("Result: ", result);
+        // console.log("Result: ", result);
         if (error) {
           return reject(error);
         }
