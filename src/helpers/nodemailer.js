@@ -26,7 +26,7 @@ const nodemailer = require("nodemailer");
 //   <body style="font-family: Arial, sans-serif; font-size: 16px;">
 //     <h2 style="text-align: center; color: #A5D7E8;">Thank You for Registering!</h2>
 //     <p style="font-weight: 700;">Dear ${email},</p>
-//     <p>We are pleased to confirm your registration. Please click the <a href="${process.env.URL_DIRECT}/.../?token=${token}" style="color: #A5D7E8; font-weight: 700;">link</a></p>
+//     <p>We are pleased to confirm your registration. Please click the <a href="${process.env.URL_DIRECT}/.../...?token=${token}" style="color: #A5D7E8; font-weight: 700;">link</a></p>
 //     <p>If you have any questions or concerns, please do not hesitate to contact us at <span style="font-weight:600;">yukduit@gmail.com</span>.</p>
 //     <p>Thank you again for registering.</p>
 //     <p>Best regards,<br><span style="font-weight: 700;">tuuhard team</span></p>
@@ -43,7 +43,7 @@ const nodemailer = require("nodemailer");
 // };
 
 module.exports = {
-  mailer: (response, token) => {
+  register: (response, token) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -63,7 +63,7 @@ module.exports = {
       <body style="font-family: Arial, sans-serif; font-size: 16px;">
         <h2 style="text-align: center; color: #A5D7E8;">Thank You for Registering!</h2>
         <p style="font-weight: 700;">Dear ${response.email},</p>
-        <p>We are pleased to confirm your registration. Please click the <a href="${process.env.URL_DIRECT}/auth/confirm/?token=${token}" style="color: #A5D7E8; font-weight: 700;">link</a></p>
+        <p>We are pleased to confirm your registration. Please click the <a href="${process.env.URL_DIRECT}/auth/confirm?token=${token}" style="color: #A5D7E8; font-weight: 700;">link</a></p>
         <p>If you have any questions or concerns, please do not hesitate to contact us at <span style="font-weight:600;">yukduit@gmail.com</span>.</p>
         <p>Thank you again for registering.</p>
         <p>Best regards,<br><span style="font-weight: 700;">tuuhard team</span></p>
@@ -78,7 +78,7 @@ module.exports = {
       return console.log(info.response);
     });
   },
-  resetmailer: (email, token) => {
+  reset: (email, token) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
