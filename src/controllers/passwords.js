@@ -80,7 +80,7 @@ module.exports = {
 
       await redis.set(response.toString(), email, 300);
 
-      nodemailer.resetmailer(email, response);
+      nodemailer.reset(email, response);
 
       res.status(200).json({
         msg: `Link reset password sent to ${email}, Please check it.`,
