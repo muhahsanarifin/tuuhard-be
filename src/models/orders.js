@@ -43,4 +43,17 @@ module.exports = {
       });
     });
   },
+  orderRecently: (body, client) => {
+    // Develepor is able to use customer_id as body to get spesific rows
+    const { order_id } = body;
+    return new Promise((resolve, reject) => {
+      const query = "SELECT * FROM orders WHERE id = $1";
+      client.query(query, [order_id], (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(result);
+      });
+    });
+  },
 };
