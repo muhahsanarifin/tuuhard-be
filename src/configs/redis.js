@@ -9,7 +9,7 @@ client.on("connect", () => {
 });
 
 client.on("error", (err) => {
-  console.log("Error:", err);
+  console.log(err);
 });
 
 client.on("end", () => {
@@ -21,6 +21,6 @@ client.on("SIGINT", () => {
 });
 
 // Note: Promise.prototype.then();
-client.connect().then();
+// client.connect().then();
 
 module.exports = client;

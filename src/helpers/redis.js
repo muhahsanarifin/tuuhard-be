@@ -1,5 +1,8 @@
 const redisClient = require("../configs/redis");
 
+// Connect redis
+redisClient.connect();
+
 module.exports = {
   set: async (key, value, expiry) => {
     try {
