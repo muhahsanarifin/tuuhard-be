@@ -98,14 +98,11 @@ module.exports = {
       // t = token r = register, u = user,
       await redis.set(`tru-${token}`, token, 86400);
 
-      // Redis
-      // await redis.quit();
-
       // Async || Developer does not use async function to implement nodemailer because latency req process is so high.
       // await nodemailer.mailer(response, token);
 
       if (response) {
-        nodemailer.mailer(response, token);
+        nodemailer.register(response, token);
       }
 
       res.status(201).json({
