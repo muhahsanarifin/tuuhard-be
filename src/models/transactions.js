@@ -1,12 +1,19 @@
 module.exports = {
-  create: (user, body, client) => {
-    const { customer_id, payment_method } = body;
+  create: (user, customer, order, body, client) => {
+    const { payment_method } = body;
 
     return new Promise((resolve, reject) => {
       const query =
-        "INSERT INTO transactions (user_id, customer_id, payment_method, status_transaction, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+        "INSERT INTO transactions (user_id, customer_id, order_id, payment_method, status_transaction, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
 
-      const values = [user.id, customer_id, payment_method, 2, Date.now()];
+      const values = [
+        user.id,
+        customer.id,
+        order.id,
+        payment_method,
+        2,
+        Date.now(),
+      ];
 
       client.query(query, values, (error, result) => {
         if (error) {
