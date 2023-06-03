@@ -12,19 +12,19 @@ const checkAllowedRoles = require("../middlewares/allowedRoles");
 authRouter.get(
   "/",
   checkLogin,
-  checkAllowedRoles(["admin", "developer", "staff"]),
+  checkAllowedRoles(["admin", "developer", "staff", "customer"]),
   productControllers.retriveProducts
 );
 authRouter.get(
   "/:productId",
   checkLogin,
-  checkAllowedRoles(["admin", "developer", "staff"]),
+  checkAllowedRoles(["admin", "developer", "staff", "customer"]),
   productControllers.retriveProduct
 );
 authRouter.post(
   "/create",
   checkLogin,
-  checkAllowedRoles(["admin", "developer", "staff"]),
+  checkAllowedRoles(["admin", "developer"]),
   (req, res, next) =>
     singleMemoryUpload("image")(req, res, (err) => {
       errorHandler(err, res, next);
@@ -36,7 +36,7 @@ authRouter.post(
 authRouter.patch(
   "/edit/:productId",
   checkLogin,
-  checkAllowedRoles(["admin", "developer", "staff"]),
+  checkAllowedRoles(["admin", "developer"]),
   (req, res, next) =>
     singleMemoryUpload("image")(req, res, (err) => {
       errorHandler(err, res, next);

@@ -7,7 +7,7 @@ const allowedRoles = require("../middlewares/allowedRoles");
 categoryRouter.get(
   "/",
   checkLogin,
-  allowedRoles(["admin", "developer", "staff"]),
+  allowedRoles(["admin", "developer", "staff", "customer"]),
   categoryControllers.retrivesCategories
 );
 categoryRouter.post(
